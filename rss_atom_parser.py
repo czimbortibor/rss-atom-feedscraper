@@ -1,10 +1,12 @@
 import feedparser
 import urllib3
-import pymongo
 
 from concurrent import futures
 import re
 import os, datetime
+
+import config_handler
+import db_handler
 
 
 testfeed = feedparser.parse('https://www.theverge.com/rss/index.xml')
@@ -31,19 +33,8 @@ for entry in testfeed['entries']:
 # db_init()
 # download_images()
 
-def db_init():
-    client = pymongo.MongoClient('mongodb://localhost:27017')
-    db = client['local']
-    collection = db['feeds']
-    collection.insert_one({'url': 'https://www.theverge.com/rss/index.xml',
-                           'tags': ''})
-    print(db.collection_names(include_system_collections=False))
 
-
-feed_list = ['http://www.ms.sapientia.ro/hu/hirek?rss&limit=25', 'https://www.reddit.com/r/funny/.rss',
-             'https://www.theverge.com/rss/index.xml', 'http://feeds.feedburner.com/d0od',
-             'http://feeds.washingtonpost.com/rss/entertainment', 'http://feeds.bbci.co.uk/news/rss.xml?edition=int',
-             'http://marosvasarhelyi.info/feed', 'http://marosvasarhelyiradio.ro/feed']
+feed_list, feed_data = config_handler.load_feed_list()
 feed_list = []
 print('feeds: {0}'.format(len(feed_list)))
 

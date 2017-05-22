@@ -1,0 +1,32 @@
+{
+    "feeds": [
+        {
+            "url": "http://www.ms.sapientia.ro/hu/hirek?rss&limit=25",
+            "tags": ["Sapientia", "MS", "Mures", "university"]
+        },
+        {
+            "url": "https://www.theverge.com/rss/index.xml",
+            "tags": ["verge", "technology", "news"]
+        },
+        {
+            "url": "http://feeds.washingtonpost.com/rss/entertainment",
+            "tags": ["washington", "post", "news", "entertainment"]
+        },
+        {
+            "url": "http://feeds.bbci.co.uk/news/rss.xml?edition=int",
+            "tags": ["BBC", "UK", "news", "world"]
+        },
+        {
+            "url": "http://marosvasarhelyi.info/feed",
+            "tags": ["MS", "Vasarhely", "Targu-Mures", "hirek", "info"]
+        },
+        {
+            "url": "http://marosvasarhelyiradio.ro/feed",
+            "tags": ["MS", "Vasarhely", "Targu-Mures", "hirek", "radio"]
+        },
+        {
+            "url": "https://www.reddit.com/r/worldnews/.rss",
+            "tags": ["reddit", "community", "world", "news"]
+        }
+    ]
+}

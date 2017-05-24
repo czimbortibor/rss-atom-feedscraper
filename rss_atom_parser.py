@@ -1,6 +1,7 @@
 import feedparser
 import urllib3
 
+import sys
 from concurrent import futures
 import re
 import os, datetime
@@ -8,19 +9,25 @@ import os, datetime
 import config_handler
 import db_handler
 
+'''
+    sapientia   : links 
+    verge       : summary
+'''
 
-testfeed = feedparser.parse('https://www.theverge.com/rss/index.xml')
+testfeed = feedparser.parse('http://rss.transindex.ro/rss.xml')
 print(len(testfeed['entries']))
 
-''' -------- categories ---------- '''
-#for entry in testfeed['feed']:
-#    print(entry)
+# config_handler.load_feed_list('feed_list.json')
+# config_handler.append_feed_list('feed_list.json', 'http://transindex.ro', ['transindex', 'transylvania', 'news', 'hirek'])
 
+image_regexp = re.compile('.*image.*')
 for entry in testfeed['entries']:
+    print(entry)
     for link in entry['links']:
-        print(link)
-    #if 'media_thumbnail' in entry:
-    #    print(entry['media_thumbnail'])
+        if image_regexp.search(link['type']):
+            print(link)
+    #if 'media-thumbnail' in entry:
+    #    print(entry['media-thumbnail'])
     #if 'media-content' in entry:
     #    print(entry['media-content'])
 
@@ -34,25 +41,21 @@ for entry in testfeed['entries']:
 # download_images()
 
 
-feed_list, feed_data = config_handler.load_feed_list()
-feed_list = []
-print('feeds: {0}'.format(len(feed_list)))
-
-entries = []
-with futures.ThreadPoolExecutor() as executor:
-    future_urls = {executor.submit(feedparser.parse, feed): feed for feed in feed_list}
-    for future in futures.as_completed(future_urls):
-        url = future_urls[future]
-        try:
-            feed = future.result()
-            # print(feed.entries[0].content)
-            entries.extend(feed['items'])
-        except Exception as ex:
-            print(ex)
-        finally:
-            print('{0} \t - parsed'.format(url))
-
-# list(map(print, entries))
+def get_feeds():
+    entries = []
+    with futures.ThreadPoolExecutor() as executor:
+        future_urls = {executor.submit(feedparser.parse, feed): feed for feed in feed_list}
+        for future in futures.as_completed(future_urls):
+            url = future_urls[future]
+            try:
+                feed = future.result()
+                # print(feed.entries[0].content)
+                entries.extend(feed['items'])
+            except Exception as ex:
+                print(ex)
+            finally:
+                print('{0} \t - parsed'.format(url))
+    return entries
 
 
 def parse_result(entry):
@@ -75,26 +78,6 @@ def parse_result(entry):
             tag_list.append(href)
             #print(contents)
     return tag_list
-
-'''
-metadata = {}
-with futures.ProcessPoolExecutor() as executor:
-    for entry, tags in zip(entries, executor.map(parse_result, entries)):
-        metadata[tags[1]] = tags[2:]
-'''
-
-metadata = {}
-parsed = []
-for entry in entries:
-    parsed.extend(parse_result(entry))
-
-for tags in parsed:
-    if isinstance(tags, str):
-        metadata[tags] = ''
-    else:
-        metadata[tags[1]] = tags[2:]
-
-# print(len(metadata.keys()))
 
 
 def download_images():
@@ -120,3 +103,37 @@ def download_images():
     print('downloaded images: {0}'.format(count))
 
 
+'''
+metadata = {}
+with futures.ProcessPoolExecutor() as executor:
+    for entry, tags in zip(entries, executor.map(parse_result, entries)):
+        metadata[tags[1]] = tags[2:]
+'''
+
+
+def main(argv):
+    if argv[1] is None:
+        feeds_file_input = 'feed_list.json'
+    else:
+        feeds_file_input = argv[1]
+    feed_list, feed_data = config_handler.load_feed_list(feeds_file_input)
+    feed_list = []
+    print('feeds: {0}'.format(len(feed_list)))
+
+    parsed = []
+    for entry in entries:
+        parsed.extend(parse_result(entry))
+
+    metadata = {}
+    for tags in parsed:
+        if isinstance(tags, str):
+            metadata[tags] = ''
+        else:
+            metadata[tags[1]] = tags[2:]
+
+# print(len(metadata.keys()))
+
+
+if __name__ == '__main__':
+    pass
+    # main(sys.argv)

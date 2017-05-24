@@ -24,11 +24,11 @@ def append_feed_list(feeds_file, website_url, tags):
             json_contents = json.load(file)
     except FileNotFoundError:
         print('Wrong input JSON file of the feed list!')
-        exit()
+        return
 
     # create the JSON object
     feed_url = get_rss_feed.get_rss_feed(website_url)
-    data = {feed_url: tags}
+    data = {'url': feed_url, 'tags': tags}
 
     json_contents.append(data)
 

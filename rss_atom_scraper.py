@@ -3,6 +3,7 @@ import urllib3
 
 import sys
 from concurrent import futures
+from multiprocessing import Pool
 import re
 import os, datetime
 
@@ -14,18 +15,19 @@ import db_handler
     verge       : summary
 '''
 
-testfeed = feedparser.parse('http://rss.transindex.ro/rss.xml')
-print(len(testfeed['entries']))
-
 # config_handler.load_feed_list('feed_list.json')
 # config_handler.append_feed_list('feed_list.json', 'http://transindex.ro', ['transindex', 'transylvania', 'news', 'hirek'])
 
-image_regexp = re.compile('.*image.*')
+testfeed = feedparser.parse('http://www.ziaruldemures.ro/?feed=rss2')
+
+image_regexp = re.compile('.*img.*')
 for entry in testfeed['entries']:
-    print(entry)
-    for link in entry['links']:
-        if image_regexp.search(link['type']):
-            print(link)
+    #print(entry)
+    for link in entry['content']:
+        # print(link)
+        if image_regexp.search(link['value']):
+            # print(link)
+            pass
     #if 'media-thumbnail' in entry:
     #    print(entry['media-thumbnail'])
     #if 'media-content' in entry:
@@ -41,7 +43,7 @@ for entry in testfeed['entries']:
 # download_images()
 
 
-def get_feeds():
+def get_feeds(feed_list):
     entries = []
     with futures.ThreadPoolExecutor() as executor:
         future_urls = {executor.submit(feedparser.parse, feed): feed for feed in feed_list}
@@ -103,26 +105,17 @@ def download_images():
     print('downloaded images: {0}'.format(count))
 
 
-'''
-metadata = {}
-with futures.ProcessPoolExecutor() as executor:
-    for entry, tags in zip(entries, executor.map(parse_result, entries)):
-        metadata[tags[1]] = tags[2:]
-'''
-
-
 def main(argv):
-    if argv[1] is None:
+    if len(argv) == 1:
         feeds_file_input = 'feed_list.json'
     else:
         feeds_file_input = argv[1]
     feed_list, feed_data = config_handler.load_feed_list(feeds_file_input)
-    feed_list = []
     print('feeds: {0}'.format(len(feed_list)))
 
-    parsed = []
-    for entry in entries:
-        parsed.extend(parse_result(entry))
+    entries = get_feeds(feed_list)
+    with Pool() as pool:
+        parsed_results = pool.map(parse_result, entries)
 
     metadata = {}
     for tags in parsed:
@@ -131,9 +124,6 @@ def main(argv):
         else:
             metadata[tags[1]] = tags[2:]
 
-# print(len(metadata.keys()))
-
 
 if __name__ == '__main__':
-    pass
-    # main(sys.argv)
+    main(sys.argv)

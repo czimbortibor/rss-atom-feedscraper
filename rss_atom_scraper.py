@@ -11,33 +11,10 @@ import config_handler
 import db_handler
 
 '''
-    sapientia   : links 
-    verge       : summary
+    TODO: scrape images from the original website (at least from the <head> section) 
 '''
 
-# config_handler.load_feed_list('feed_list.json')
 # config_handler.append_feed_list('feed_list.json', 'http://transindex.ro', ['transindex', 'transylvania', 'news', 'hirek'])
-
-testfeed = feedparser.parse('http://www.ziaruldemures.ro/?feed=rss2')
-
-image_regexp = re.compile('.*img.*')
-for entry in testfeed['entries']:
-    #print(entry)
-    for link in entry['content']:
-        # print(link)
-        if image_regexp.search(link['value']):
-            # print(link)
-            pass
-    #if 'media-thumbnail' in entry:
-    #    print(entry['media-thumbnail'])
-    #if 'media-content' in entry:
-    #    print(entry['media-content'])
-
-
-# testfeed = feedparser.parse('https://www.reddit.com/r/funny/.rss')
-# print(testfeed['feed']['link'])
-# print(type(testfeed.entries[0].content))
-# print(testfeed.entries[0].content[0])
 
 
 def get_feeds(feed_list):
@@ -63,20 +40,18 @@ def parse_result(entry):
         contents = entry['content']
     elif 'media_thumbnail' in entry:
         contents = entry['media_thumbnail']
+    elif 'enclosures' in entry:
+        contents = entry['enclosures']
     else:
         return None
     for tag in contents:
         if 'value' in tag:
-            # print(tag['value'])
             href = pattern.search(tag['value'])
             if href:
-                # tag_list.append(href.group().split('\"')[1])
                 return href.group().split('\"')[1]
         else:
             href = contents[0]['url']
-            # tag_list.append(href)
             return href
-            # print(contents)
 
 
 def download_images(img_urls):

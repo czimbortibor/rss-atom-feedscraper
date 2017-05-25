@@ -1,1 +1,9 @@
-[{"tags": ["Sapientia", "MS", "Mures", "university"], "url": "http://www.ms.sapientia.ro/hu/hirek?rss&limit=25"}, {"tags": ["verge", "technology", "news"], "url": "https://www.theverge.com/rss/index.xml"}, {"tags": ["washington", "post", "news", "entertainment"], "url": "http://feeds.washingtonpost.com/rss/entertainment"}, {"tags": ["BBC", "UK", "news", "world"], "url": "http://feeds.bbci.co.uk/news/rss.xml?edition=int"}, {"tags": ["MS", "Vasarhely", "Targu-Mures", "hirek", "info"], "url": "http://marosvasarhelyi.info/feed"}, {"tags": ["MS", "Vasarhely", "Targu-Mures", "hirek", "radio"], "url": "http://marosvasarhelyiradio.ro/feed"}, {"tags": ["reddit", "community", "world", "news"], "url": "https://www.reddit.com/r/worldnews/.rss"}]
+[{"tags": ["Sapientia", "MS", "Mures", "university"], "url": "http://www.ms.sapientia.ro/hu/hirek?rss&limit=25"},
+  {"tags": ["verge", "technology", "news"], "url": "https://www.theverge.com/rss/index.xml"},
+  {"tags": ["washington", "post", "news", "entertainment"], "url": "http://feeds.washingtonpost.com/rss/entertainment"},
+  {"tags": ["BBC", "UK", "news", "world"], "url": "http://feeds.bbci.co.uk/news/rss.xml?edition=int"},
+  {"tags": ["MS", "Vasarhely", "Targu-Mures", "hirek", "info"], "url": "http://marosvasarhelyi.info/feed"},
+  {"tags": ["MS", "Vasarhely", "Targu-Mures", "hirek", "radio"], "url": "http://marosvasarhelyiradio.ro/feed"},
+  {"tags": ["reddit", "community", "world", "news"], "url": "https://www.reddit.com/r/worldnews/.rss"},
+  {"tags": ["zi", "ziar", "mures"], "url": "http://www.zi-de-zi.ro/feed/"},
+  {"tags": ["ziar", "mures"], "url": "http://www.ziaruldemures.ro/?feed=rss2"}]

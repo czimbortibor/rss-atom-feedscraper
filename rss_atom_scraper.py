@@ -51,7 +51,6 @@ def get_feeds(feed_list):
             url = future_urls[future]
             try:
                 feed = future.result()
-                # print(feed.entries[0].content)
                 entries.extend(feed['items'])
             except Exception as ex:
                 print(ex)
@@ -68,21 +67,22 @@ def parse_result(entry):
     elif 'media_thumbnail' in entry:
         contents = entry['media_thumbnail']
     else:
-        return []
+        return None
     for tag in contents:
         if 'value' in tag:
             # print(tag['value'])
             href = pattern.search(tag['value'])
             if href:
-                tag_list.append(href.group().split('\"'))
+                # tag_list.append(href.group().split('\"')[1])
+                return href.group().split('\"')[1]
         else:
             href = contents[0]['url']
-            tag_list.append(href)
-            #print(contents)
-    return tag_list
+            # tag_list.append(href)
+            return href
+            # print(contents)
 
 
-def download_images():
+def download_images(img_urls):
     img_dir = str(datetime.date.today())
     if not os.path.exists(img_dir):
         os.makedirs(img_dir)
@@ -90,10 +90,13 @@ def download_images():
 
     count = 0
     http = urllib3.PoolManager()
-    for url in metadata.keys():
-        response = http.request('GET', url)
+    for url in img_urls:
+        try:
+            response = http.request('GET', url)
+        except:
+            continue
         image_bytes = response.data
-        url = url.replace('https://', '').rsplit('/')
+        url = url.rsplit('/')
         file_name = url[len(url)-1]
 
         if file_name:
@@ -115,14 +118,19 @@ def main(argv):
 
     entries = get_feeds(feed_list)
     with Pool() as pool:
-        parsed_results = pool.map(parse_result, entries)
+        img_urls = pool.map(parse_result, entries)
 
+    '''
     metadata = {}
-    for tags in parsed:
+    for tags in parsed_results:
+        print(tags)
         if isinstance(tags, str):
             metadata[tags] = ''
         else:
             metadata[tags[1]] = tags[2:]
+    '''
+
+    download_images(img_urls)
 
 
 if __name__ == '__main__':

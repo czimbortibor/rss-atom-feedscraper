@@ -39,9 +39,6 @@ for entry in testfeed['entries']:
 # print(type(testfeed.entries[0].content))
 # print(testfeed.entries[0].content[0])
 
-# db_init()
-# download_images()
-
 
 def get_feeds(feed_list):
     entries = []
@@ -119,16 +116,6 @@ def main(argv):
     entries = get_feeds(feed_list)
     with Pool() as pool:
         img_urls = pool.map(parse_result, entries)
-
-    '''
-    metadata = {}
-    for tags in parsed_results:
-        print(tags)
-        if isinstance(tags, str):
-            metadata[tags] = ''
-        else:
-            metadata[tags[1]] = tags[2:]
-    '''
 
     download_images(img_urls)
 

@@ -29,29 +29,48 @@ def get_feeds(feed_list):
             except Exception as ex:
                 print(ex)
             finally:
-                print('{0} \t - parsed'.format(url))
+                print('{0} \t\t - parsed'.format(url))
     return entries
 
 
 def parse_result(entry):
-    pattern = re.compile('(src=.*)|(img src=.*)')
-    tag_list = []
+    pattern_src = re.compile('(src=.*)|(img src=.*)')
+    pattern_url = re.compile('url=.*')
+    contents = []
     if 'content' in entry:
-        contents = entry['content']
-    elif 'media_thumbnail' in entry:
-        contents = entry['media_thumbnail']
-    elif 'enclosures' in entry:
-        contents = entry['enclosures']
-    else:
-        return None
-    for tag in contents:
-        if 'value' in tag:
-            href = pattern.search(tag['value'])
+        contents.append(entry['content'])
+    if 'media_thumbnail' in entry:
+        contents.append(entry['media_thumbnail'])
+    if 'summary' in entry:
+        contents.append(entry['summary'])
+    if 'enclosures' in entry:
+        contents.append(entry['enclosures'])
+    for content in contents:
+        if isinstance(content, list):
+            for tag in content:
+                if isinstance(tag, dict):
+                    if 'value' in tag:
+                        href = pattern_src.search(tag['value'])
+                    else:
+                        href = tag['url']
+                        return href
+                else:
+                    href = pattern_src.search(tag)
+                    if href:
+                        return href.group().split('\"')[1]
+                    else:
+                        if 'href' in tag:
+                            href = tag['href']
+                            return href
+        else:
+            href = pattern_src.search(content)
             if href:
                 return href.group().split('\"')[1]
-        else:
-            href = contents[0]['url']
-            return href
+            else:
+                href = pattern_url.search(content)
+                if href:
+                    print(href.group())
+                    return href.group()
 
 
 def download_images(img_urls):
@@ -77,7 +96,7 @@ def download_images(img_urls):
             print(file_name)
             count += 1
 
-    print('downloaded images: {0}'.format(count))
+    print('\ndownloaded images: {0}'.format(count))
 
 
 def main(argv):
@@ -92,6 +111,7 @@ def main(argv):
     with Pool() as pool:
         img_urls = pool.map(parse_result, entries)
 
+    print('\ndownloading the images...\n')
     download_images(img_urls)
 
 

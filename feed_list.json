@@ -1,9 +1,17 @@
-[{"tags": ["Sapientia", "MS", "Mures", "university"], "url": "http://www.ms.sapientia.ro/hu/hirek?rss&limit=25"},
+[ {"tags": ["sapientia", "MS", "Mures", "university"], "url": "http://www.ms.sapientia.ro/hu/hirek?rss&limit=25"},
   {"tags": ["verge", "technology", "news"], "url": "https://www.theverge.com/rss/index.xml"},
   {"tags": ["washington", "post", "news", "entertainment"], "url": "http://feeds.washingtonpost.com/rss/entertainment"},
   {"tags": ["BBC", "UK", "news", "world"], "url": "http://feeds.bbci.co.uk/news/rss.xml?edition=int"},
   {"tags": ["MS", "Vasarhely", "Targu-Mures", "hirek", "info"], "url": "http://marosvasarhelyi.info/feed"},
   {"tags": ["MS", "Vasarhely", "Targu-Mures", "hirek", "radio"], "url": "http://marosvasarhelyiradio.ro/feed"},
-  {"tags": ["reddit", "community", "world", "news"], "url": "https://www.reddit.com/r/worldnews/.rss"},
+  {"tags": ["reddit", "community", "europe", "news"], "url": "https://www.reddit.com/r/europe/.rss"},
+  {"tags": ["reddit", "community", "politics", "news"], "url": "https://www.reddit.com/r/politics/.rss"},
   {"tags": ["zi", "ziar", "mures"], "url": "http://www.zi-de-zi.ro/feed/"},
-  {"tags": ["ziar", "mures"], "url": "http://www.ziaruldemures.ro/?feed=rss2"}]
+  {"tags": ["ziar", "mures"], "url": "http://www.ziaruldemures.ro/?feed=rss2"},
+  {"tags": ["szekelyhon", "szekely", "hirek", "ujsag", "szekelyfold"], "url": "https://media.szekelyhon.ro/rss/szekelyhon_hirek.xml"},
+  {"tags": ["transindex", "szekely", "hirek", "ujsag", "szekelyfold"], "url": "http://rss.transindex.ro/rss.xml"},
+  {"tags": ["punctul", "ziar", "mures", "transilvania"], "url": "http://www.punctul.ro/feed/"},
+  {"tags": ["ziar", "mures", "transilvania"], "url": "http://www.ziaruldemures.ro/?feed=rss2"},
+  {"tags": ["udvarhely", "harghita", "hirek", "hirportal", "udvarhelyszek"], "url": "http://uh.ro/?format=feed&type=rss"},
+  {"tags": ["helikon", "erdely", "hirek", "kultura"], "url": "https://www.helikon.ro/feed/"}
+]

@@ -14,7 +14,7 @@ def load_feed_list(feeds_file):
     for feed in feeds_data:
         feed_list.append(feed['url'])
 
-    print('feed urls: {0}'.format(feed_list))
+    # print('feed urls: {0}'.format(feed_list))
     return feed_list, feeds_data
 
 

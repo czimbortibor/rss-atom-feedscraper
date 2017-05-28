@@ -6,12 +6,13 @@ from concurrent import futures
 from multiprocessing import Pool
 import re
 import os, datetime
+from collections import defaultdict
 
 import config_handler
 import db_handler
 
 '''
-    TODO: scrape images from the original website (at least from the <head> section) 
+    TODO: scrape images from the original website (at least from the <head> section)
 '''
 
 # config_handler.append_feed_list('feed_list.json', 'http://transindex.ro', ['transindex', 'transylvania', 'news', 'hirek'])
@@ -33,10 +34,29 @@ def get_feeds(feed_list):
     return entries
 
 
-def parse_result(entry):
+def get_metadata(entry):
+    metadata = defaultdict(list)
+
+    if 'title' in entry:
+        metadata['title'] = entry['title']
+    if 'summary' in entry:
+        metadata['summary'] = entry['summary']
+    if 'published' in entry:
+        metadata['published'] = entry['published']
+    if 'updated' in entry:
+        metadata['updated'] = entry['updated']
+    if 'link' in entry:
+        metadata['link'] = entry['link']
+
+    return metadata
+
+
+def scrape_images(entry):
     pattern_src = re.compile('(src=.*)|(img src=.*)')
     pattern_url = re.compile('url=.*')
     contents = []
+
+    # possible image locations in the tags
     if 'content' in entry:
         contents.append(entry['content'])
     if 'media_thumbnail' in entry:
@@ -45,6 +65,7 @@ def parse_result(entry):
         contents.append(entry['summary'])
     if 'enclosures' in entry:
         contents.append(entry['enclosures'])
+
     for content in contents:
         if isinstance(content, list):
             for tag in content:
@@ -58,8 +79,7 @@ def parse_result(entry):
                     href = pattern_src.search(tag)
                     if href:
                         return href.group().split('\"')[1]
-                    else:
-                        if 'href' in tag:
+                    elif 'href' in tag:
                             href = tag['href']
                             return href
         else:
@@ -69,7 +89,6 @@ def parse_result(entry):
             else:
                 href = pattern_url.search(content)
                 if href:
-                    print(href.group())
                     return href.group()
 
 
@@ -101,18 +120,24 @@ def download_images(img_urls):
 
 def main(argv):
     if len(argv) == 1:
-        feeds_file_input = 'feed_list.json'
+        feeds_file_input = 'test.json'
     else:
         feeds_file_input = argv[1]
     feed_list, feed_data = config_handler.load_feed_list(feeds_file_input)
     print('feeds: {0}'.format(len(feed_list)))
 
     entries = get_feeds(feed_list)
+
+    # get the metadata in interest
     with Pool() as pool:
-        img_urls = pool.map(parse_result, entries)
+        metadata = pool.map(get_metadata, entries)
+
+    # get the images
+    with Pool() as pool:
+        img_urls = pool.map(scrape_images, entries)
 
     print('\ndownloading the images...\n')
-    download_images(img_urls)
+    # download_images(img_urls)
 
 
 if __name__ == '__main__':

@@ -9,13 +9,11 @@ import os, datetime
 from collections import defaultdict
 
 import config_handler
-import db_handler
+from db_context import DbContext
 
 '''
     TODO: scrape images from the original website (at least from the <head> section)
 '''
-
-# config_handler.append_feed_list('feed_list.json', 'http://transindex.ro', ['transindex', 'transylvania', 'news', 'hirek'])
 
 
 def get_feeds(feed_list):
@@ -93,6 +91,7 @@ def scrape_images(entry):
 
 
 def download_images(img_urls):
+    print('\ndownloading the images...\n')
     img_dir = str(datetime.date.today())
     if not os.path.exists(img_dir):
         os.makedirs(img_dir)
@@ -120,7 +119,7 @@ def download_images(img_urls):
 
 def main(argv):
     if len(argv) == 1:
-        feeds_file_input = 'test.json'
+        feeds_file_input = 'feed_list.json'
     else:
         feeds_file_input = argv[1]
     feed_list, feed_data = config_handler.load_feed_list(feeds_file_input)
@@ -128,16 +127,23 @@ def main(argv):
 
     entries = get_feeds(feed_list)
 
+    # MongoDB connection
+    URI = 'mongodb://localhost:27017'
+    db_name = 'local'
+    collection_name = 'RSSFeeds'
+    db_context = DbContext(URI, db_name, collection_name)
+
     # get the metadata in interest
     with Pool() as pool:
         metadata = pool.map(get_metadata, entries)
+
+    db_context.insert_feeds(metadata)
 
     # get the images
     with Pool() as pool:
         img_urls = pool.map(scrape_images, entries)
 
-    print('\ndownloading the images...\n')
-    # download_images(img_urls)
+    download_images(img_urls)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
-[ {"tags": ["sapientia", "MS", "Mures", "university"], "url": "http://www.ms.sapientia.ro/hu/hirek?rss&limit=25"},
+[
+  {"tags": ["sapientia", "MS", "Mures", "university"], "url": "http://www.ms.sapientia.ro/hu/hirek?rss&limit=25"},
   {"tags": ["verge", "technology", "news"], "url": "https://www.theverge.com/rss/index.xml"},
   {"tags": ["washington", "post", "news", "entertainment"], "url": "http://feeds.washingtonpost.com/rss/entertainment"},
   {"tags": ["BBC", "UK", "news", "world"], "url": "http://feeds.bbci.co.uk/news/rss.xml?edition=int"},

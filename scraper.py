@@ -117,5 +117,6 @@ class Scraper:
                 print(file_name)
                 count += 1
 
+        os.chdir('..')
         print('\ndownloaded images: {0}'.format(count))
         return img_dir

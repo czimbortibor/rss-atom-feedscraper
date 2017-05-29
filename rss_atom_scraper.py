@@ -12,12 +12,13 @@ def db_connect(URI, db_name, collection_name):
     return db_context
 
 
-def main(argv):
-    if len(argv) == 1:
+def main(argv=None):
+    if argv is None:
         feeds_file_input = 'feed_list.json'
     else:
-        feeds_file_input = argv[1]
-    feed_list, feed_data = config_handler.load_feed_list(feeds_file_input)
+        feeds_file_input = argv
+    print(feeds_file_input)
+    feed_list, feed_list_jsondata = config_handler.load_feed_list(feeds_file_input)
     print('feeds: {0}'.format(len(feed_list)))
 
     URI = 'mongodb://localhost:27017'
@@ -27,7 +28,7 @@ def main(argv):
     db_collection = db_context.get_collection()
 
     print('inserting the feed list into the database...\n')
-    db_collection.insert_many(feed_data)
+    db_collection.insert_many(feed_list_jsondata)
 
     scraper = Scraper(feed_list)
 

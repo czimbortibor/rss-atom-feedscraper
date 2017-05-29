@@ -35,7 +35,6 @@ class Scraper:
                     print('{0} \t\t - parsed'.format(url))
         return entries
 
-
     def get_metadata(self, entry):
         metadata = defaultdict(list)
 
@@ -53,7 +52,6 @@ class Scraper:
             metadata['link'] = entry['link']
 
         return metadata
-
 
     def scrape_images(self, entry):
         pattern_src = re.compile('(src=.*)|(img src=.*)')
@@ -95,7 +93,6 @@ class Scraper:
                     if href:
                         return href.group()
 
-
     def download_images(self, img_urls):
         print('\ndownloading the images...\n')
         img_dir = str(datetime.date.today())
@@ -121,3 +118,4 @@ class Scraper:
                 count += 1
 
         print('\ndownloaded images: {0}'.format(count))
+        return img_dir

@@ -22,9 +22,12 @@ def main(argv):
 
     URI = 'mongodb://localhost:27017'
     db_name = 'local'
-    collection_name = 'RSSFeeds'
+    collection_name = 'FeedList'
     db_context = db_connect(URI, db_name, collection_name)
     db_collection = db_context.get_collection()
+
+    print('inserting the feed list into the database...\n')
+    db_collection.insert_many(feed_data)
 
     scraper = Scraper(feed_list)
 
@@ -33,17 +36,23 @@ def main(argv):
     with Pool() as pool:
         metadata = pool.map(scraper.get_metadata, entries)
 
-    if db_collection:
-        print('inserting feeds into the database...')
-        db_collection.insert_many(metadata)
-    else:
-        print('db connection was not set up!')
+    db_collection = db_context.change_collection('RSSFeeds')
+    print('inserting feeds into the database...\n')
+    db_collection.insert_many(metadata)
 
     # get the images
     with Pool() as pool:
         img_urls = pool.map(scraper.scrape_images, entries)
 
-    scraper.download_images(img_urls)
+    # download the images and return the directory name
+    img_dir = scraper.download_images(img_urls)
+
+    print('inserting image collection path into the database...\n')
+    db_collection = db_context.change_collection('ImageCollections')
+    import os
+    full_img_path = os.path.abspath('../' + img_dir)
+    data = {'path': full_img_path}
+    db_collection.insert(data)
 
 
 if __name__ == '__main__':

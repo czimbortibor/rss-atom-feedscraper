@@ -13,6 +13,5 @@
   {"tags": ["transindex", "szekely", "hirek", "ujsag", "szekelyfold"], "url": "http://rss.transindex.ro/rss.xml"},
   {"tags": ["punctul", "ziar", "mures", "transilvania"], "url": "http://www.punctul.ro/feed/"},
   {"tags": ["ziar", "mures", "transilvania"], "url": "http://www.ziaruldemures.ro/?feed=rss2"},
-  {"tags": ["udvarhely", "harghita", "hirek", "hirportal", "udvarhelyszek"], "url": "http://uh.ro/?format=feed&type=rss"},
-  {"tags": ["helikon", "erdely", "hirek", "kultura"], "url": "https://www.helikon.ro/feed/"}
+  {"tags": ["udvarhely", "harghita", "hirek", "hirportal", "udvarhelyszek"], "url": "http://uh.ro/?format=feed&type=rss"}
 ]

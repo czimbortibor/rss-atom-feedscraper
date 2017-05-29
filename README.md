@@ -1,3 +1,7 @@
+### overview
+*feed_list.json* contains a list of RSS and Atom feeds which the script parses and downloads the found images in the tags and some relevant metadata. The metadata, list of feeds and the path to the images are then stored in MongoDB.
+*scheduler.py* schedules an automatic run of the script in the background
+
 ### packages
   - [feedparser](https://github.com/kurtmckee/feedparser)
   - [pymongo](https://api.mongodb.com/python/current/)

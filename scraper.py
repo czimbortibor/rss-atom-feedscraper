@@ -6,6 +6,7 @@ from collections import defaultdict
 
 import feedparser
 import urllib3
+from bs4 import BeautifulSoup
 
 
 '''
@@ -40,10 +41,13 @@ class Scraper:
 
         if 'title' in entry:
             metadata['title'] = entry['title']
+        if 'author' in entry:
+            metadata['author'] = entry['author']
         if 'title_detail' in entry:
             metadata['rss'] = entry['title_detail']['base']
         if 'summary' in entry:
-            metadata['summary'] = entry['summary']
+            # remove the html tags
+            metadata['summary'] = BeautifulSoup(entry['summary'], 'lxml').text
         if 'published' in entry:
             metadata['published'] = entry['published']
         if 'updated' in entry:
@@ -51,9 +55,11 @@ class Scraper:
         if 'link' in entry:
             metadata['link'] = entry['link']
 
+        metadata['image_url'] = self.scrape_image(entry)
+
         return metadata
 
-    def scrape_images(self, entry):
+    def scrape_image(self, entry):
         pattern_src = re.compile('(src=.*)|(img src=.*)')
         pattern_url = re.compile('url=.*')
         contents = []
@@ -74,6 +80,8 @@ class Scraper:
                     if isinstance(tag, dict):
                         if 'value' in tag:
                             href = pattern_src.search(tag['value'])
+                            if href:
+                                return href.group().split('\"')[1]
                         else:
                             href = tag['url']
                             return href
@@ -93,8 +101,7 @@ class Scraper:
                     if href:
                         return href.group()
 
-    def download_images(self, img_urls):
-        print('\ndownloading the images...\n')
+    def download_images(self, metadata):
         img_dir = str(datetime.date.today())
         if not os.path.exists(img_dir):
             os.makedirs(img_dir)
@@ -102,7 +109,8 @@ class Scraper:
 
         count = 0
         http = urllib3.PoolManager()
-        for url in img_urls:
+        for item in metadata:
+            url = item['image_url']
             try:
                 response = http.request('GET', url)
             except:

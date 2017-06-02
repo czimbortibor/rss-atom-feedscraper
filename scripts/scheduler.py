@@ -1,8 +1,9 @@
 import sys
-import schedule
 import time
 
-import rss_atom_scraper
+import schedule
+
+from scripts import rss_atom_scraper
 
 
 def job():

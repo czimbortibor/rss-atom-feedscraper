@@ -9,11 +9,6 @@ import urllib3
 from bs4 import BeautifulSoup
 
 
-'''
-    TODO: scrape images from the original website (at least from the <head> section)
-'''
-
-
 class Scraper:
     def __init__(self, feed_list):
         self.entries = self.get_feeds(feed_list)

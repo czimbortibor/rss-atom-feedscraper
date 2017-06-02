@@ -4,7 +4,7 @@ from multiprocessing import Pool
 from db_context import DbContext
 from scraper import Scraper
 
-from scripts.config_handler import ConfigHandler
+from config_handler import ConfigHandler
 
 
 def main(argv=None):
@@ -13,11 +13,13 @@ def main(argv=None):
     else:
         feeds_file_input = argv[1]
 
-    URI, db_name, feeds_name_collection, feeds_collection, image_collection = ConfigHandler.get_db_config('config/db_config.json')
+    db_config_file = 'config/db_config.json'
+    config_handler = ConfigHandler(feeds_file_input, db_config_file)
+    URI, db_name, feeds_name_collection, feeds_collection, image_collection = config_handler.get_db_config()
     db_context = DbContext(URI, db_name, feeds_name_collection, feeds_collection, image_collection)
 
     print('reading {0} ...'.format(feeds_file_input))
-    feed_list, feed_list_jsondata = ConfigHandler.load_feed_list(feeds_file_input)
+    feed_list, feed_list_jsondata = config_handler.load_feed_list()
     print('feeds: {0}\n'.format(len(feed_list)))
 
     print('inserting the feed list into the database...\n')

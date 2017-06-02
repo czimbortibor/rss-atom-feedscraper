@@ -45,6 +45,7 @@ class Scraper:
             metadata['author'] = entry['author']
         if 'title_detail' in entry:
             metadata['rss'] = entry['title_detail']['base']
+            domain_name = entry['title_detail']['base'].rsplit('/')[2].replace('www.', '')
         if 'summary' in entry:
             # remove the html tags
             metadata['summary'] = BeautifulSoup(entry['summary'], 'lxml').text
@@ -55,7 +56,13 @@ class Scraper:
         if 'link' in entry:
             metadata['link'] = entry['link']
 
-        metadata['image_url'] = self.scrape_image(entry)
+        img_url =  self.scrape_image(entry)
+        metadata['image_url'] = img_url
+        if img_url and domain_name:
+            url = img_url.rsplit('/')
+            img_name = url[len(url) - 1]
+            img_file_name = domain_name + '_' + img_name
+            metadata['image_file_name'] = img_file_name
 
         return metadata
 
@@ -117,9 +124,11 @@ class Scraper:
                 continue
             image_bytes = response.data
             url = url.rsplit('/')
-            file_name = url[len(url)-1]
+            img_name = url[len(url)-1]
 
-            if file_name:
+            if img_name:
+                domain_name = item['rss'].rsplit('/')[2].replace('www.', '')
+                file_name = domain_name + '_' + img_name
                 with open(file_name, 'w+b') as output_f:
                     output_f.write(image_bytes)
                 print(file_name)

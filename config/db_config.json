@@ -1,0 +1,5 @@
+{
+  "URI":  "mongodb://localhost:27017",
+  "db_name":  "local",
+  "collection_name":  "FeedList"
+}

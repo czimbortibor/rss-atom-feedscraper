@@ -2,6 +2,20 @@ import json
 import get_rss_feed
 
 
+def get_db_config(config_file):
+    try:
+        with open(config_file) as file:
+            json_contents = json.load(file)
+    except FileNotFoundError:
+        print('Wrong input JSON file for the database connection!')
+        return None, None, None
+
+    URI = json_contents['URI']
+    db_name = json_contents['db_name']
+    collection_name = json_contents['collection_name']
+    return URI, db_name, collection_name
+
+
 def load_feed_list(feeds_file):
     try:
         with open(feeds_file) as file:

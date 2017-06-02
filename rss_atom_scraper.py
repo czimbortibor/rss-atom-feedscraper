@@ -14,16 +14,14 @@ def db_connect(URI, db_name, collection_name):
 
 def main(argv=None):
     if len(argv) == 1:
-        feeds_file_input = 'feed_list.json'
+        feeds_file_input = 'config/feed_list.json'
     else:
         feeds_file_input = argv[1]
     print('reading {0} ...'.format(feeds_file_input))
     feed_list, feed_list_jsondata = config_handler.load_feed_list(feeds_file_input)
     print('feeds: {0}\n'.format(len(feed_list)))
 
-    URI = 'mongodb://localhost:27017'
-    db_name = 'local'
-    collection_name = 'FeedList'
+    URI, db_name, collection_name = config_handler.get_db_config('config/db_config.json')
     db_context = db_connect(URI, db_name, collection_name)
     db_collection = db_context.get_collection()
 

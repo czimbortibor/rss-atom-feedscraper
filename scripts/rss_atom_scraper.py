@@ -3,17 +3,16 @@ from multiprocessing import Pool
 
 from db_context import DbContext
 from scraper import Scraper
-
 from config_handler import ConfigHandler
 
 
 def main(argv=None):
     if len(argv) == 1:
-        feeds_file_input = 'config/feed_list.json'
+        feeds_file_input = '../config/test.json'
     else:
         feeds_file_input = argv[1]
 
-    db_config_file = 'config/db_config.json'
+    db_config_file = '../config/db_config.json'
     config_handler = ConfigHandler(feeds_file_input, db_config_file)
     URI, db_name, feeds_name_collection, feeds_collection, image_collection = config_handler.get_db_config()
     db_context = DbContext(URI, db_name, feeds_name_collection, feeds_collection, image_collection)
@@ -33,7 +32,7 @@ def main(argv=None):
         metadata = pool.map(scraper.get_metadata, entries)
 
     print('inserting feeds into the database...\n')
-    db_context.feeds_collection.insert_many(metadata)
+'''    db_context.feeds_collection.insert_many(metadata)
 
     print('\ndownloading the images...\n')
     # download the images and return the directory name
@@ -44,6 +43,7 @@ def main(argv=None):
     full_img_path = os.path.abspath('../' + img_dir)
     data = {'path': full_img_path}
     db_context.image_collection.insert(data)
+'''
 
 
 if __name__ == '__main__':

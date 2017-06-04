@@ -24,6 +24,7 @@ class Scraper:
                 url = future_urls[future]
                 try:
                     feed = future.result()
+                    print(feed['headers'])
                     entries.extend(feed['items'])
                 except Exception as ex:
                     print(ex)

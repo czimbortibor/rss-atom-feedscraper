@@ -3,7 +3,7 @@ import time
 
 import schedule
 
-from scripts import rss_atom_scraper
+import rss_atom_scraper
 
 
 def job():
@@ -13,7 +13,7 @@ def job():
 
 def main(argv=None):
     if len(argv) == 1:
-        print('using default 6 minutes to run the script')
+        print('using default 6 minutes interval to run the script')
         run_period = 6
     else:
         run_period = int(argv[1])

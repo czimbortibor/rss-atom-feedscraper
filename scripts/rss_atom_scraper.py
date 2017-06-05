@@ -7,13 +7,9 @@ from scraper import Scraper
 from config_handler import ConfigHandler
 
 
-def main(argv=None):
-    if len(argv) == 1:
-        feeds_file_input = 'config/feed_list.json'
-    else:
-        feeds_file_input = argv[1]
-
-    db_config_file = 'config/db_config.json'
+def main():
+    feeds_file_input = os.path.abspath('config/feed_list.json')
+    db_config_file = os.path.abspath('config/db_config.json')
     config_handler = ConfigHandler(feeds_file_input, db_config_file)
     URI, db_name, feeds_name_collection, feeds_collection, image_collection = config_handler.get_db_config()
     db_context = DbContext(URI, db_name, feeds_name_collection, feeds_collection, image_collection)
@@ -49,4 +45,4 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main()

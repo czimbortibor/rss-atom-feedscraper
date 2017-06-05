@@ -1,6 +1,6 @@
 
 import os
-from pprint import pprint
+from datetime import datetime
 import requests
 
 import feedparser
@@ -18,9 +18,9 @@ class UpdateMonitor:
         self.db_context = DbContext(URI, db_name, feeds_name_collection, feeds_collection, image_collection)
 
     def get_intervals(self, feed_url):
-
+        pass
         # simple HTTP request header checking does not work for the update_interval calculation
-        '''
+        """
         response = requests.get(feed_url)
         if 'Last-Modified' in response.headers:
             build_date = response.headers['Last-Modified']
@@ -32,30 +32,33 @@ class UpdateMonitor:
             #resp = requests.get(feed_url, params={'If-Modified-Since': build_date})
             print(resp)
             update_interval = ''
-        '''
+        """
 
         feed = feedparser.parse(feed_url)
         if 'updated' in feed['channel']:
-            build_date = feed['channel']['updated']
-            update_interval = ''
+            try:
+                build_date = datetime.strptime(feed['channel']['updated'], '%a, %d %b %Y %H:%M:%S %z')
+            except ValueError:
+                build_date = feed['channel']['updated']
+            update_interval = 0
         elif 'sy_updateperiod' in feed['channel']:
             period = feed['channel']['sy_updateperiod']
             if period == 'hourly':
-                update_interval = '60'
+                update_interval = 60
             else:
-                update_interval = ''
+                update_interval = 0
             response = requests.get(feed_url)
             if 'Last-Modified' in response.headers:
-                build_date = response.headers['Last-Modified']
+                build_date = datetime.strptime(response.headers['Last-Modified'], '%a, %d %b %Y %H:%M:%S %z')
             else:
-                build_date = ''
+                build_date = 0
         else:
             # if no updatePeriod is defined then the feed's build date refreshes with every request
-            build_date = ''
-            update_interval = ''
+            build_date = 0
+            update_interval = 0
         if 'ttl' in feed['channel']:
             # ttl - time to live (minutes): http://www.rssboard.org/rss-specification#ltttlgtSubelementOfLtchannelgt
-            update_interval = feed['channel']['ttl']
+            update_interval = int(feed['channel']['ttl'])
 
         print('\tlast updated on: {0}'.format(build_date))
         print('\tupdate interval: {0}'.format(update_interval))
@@ -71,8 +74,23 @@ class UpdateMonitor:
                                                                       upsert=True)
             print()
 
+    def reload_feed(self, feed_name):
+        """
+            should the feed be reloaded
+        """
+
+        feed = self.db_context.feeds_name_collection.find_one({'url': feed_name})
+        build_date = feed['build_date']
+        update_interval = feed['update_interval']
+        time_now = datetime.utcnow()
+        difference = datetime(build_date) + datetime(update_interval) - time_now
+        if build_date + update_interval > time_now:
+            return True
+        return False
+
 feeds_file = os.path.abspath('../config/feed_list.json')
 db_config_file = os.path.abspath('../config/db_config.json')
 update_monitor = UpdateMonitor(feeds_file, db_config_file)
 
 update_monitor.check_feeds()
+

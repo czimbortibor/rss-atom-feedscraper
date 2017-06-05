@@ -104,13 +104,16 @@ class Scraper:
                         return href.group()
 
     def download_images(self, metadata, image_dir=''):
+        date_now = str(datetime.date.today())
         if image_dir == '':
-            os.chdir('..')
-            img_dir = str(datetime.date.today())
-            if not os.path.exists(img_dir):
-                os.makedirs(img_dir)
-            os.chdir(img_dir)
-        
+            # parent directory
+            image_dir = os.path.dirname(os.getcwd())
+        if not os.path.exists(image_dir):
+            os.makedirs(image_dir)
+        # specified directory + current date
+        download_dir = os.path.join(image_dir, date_now)
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
         count = 0
         http = urllib3.PoolManager()
         for item in metadata:
@@ -125,7 +128,7 @@ class Scraper:
 
             if img_name:
                 domain_name = item['rss'].rsplit('/')[2].replace('www.', '')
-                file_name = domain_name + '_' + img_name
+                file_name = download_dir + os.path.sep + domain_name + '_' + img_name
                 with open(file_name, 'w+b') as output_f:
                     output_f.write(image_bytes)
                 print('{0}/{1} done'.format(count, len(metadata)), end='\r') # \r - beginning of the line

@@ -8,7 +8,7 @@ from config_handler import ConfigHandler
 
 
 def main():
-    feeds_file_input = os.path.abspath('config/test.json')
+    feeds_file_input = os.path.abspath('config/feed_list.json')
     db_config_file = os.path.abspath('config/db_config.json')
     config_handler = ConfigHandler(feeds_file_input, db_config_file)
     uri, db_name, feeds_name_collection, feeds_collection, image_collection = config_handler.get_db_config()
@@ -35,15 +35,11 @@ def main():
     #db_context.feeds_collection.update_many(metadata, {'$set': metadata}, upsert=True)
 
     print('creating indexes...\n')
-    # http://api.mongodb.com/python/current/api/pymongo/collation.html#pymongo.collation.Collation
-    language_collation = pymongo.collation.Collation('en_US')
-
     # multiple indexes
     """index1 = pymongo.IndexModel([('title', pymongo.TEXT)], default_language='english', name='title_index')
     index2 = pymongo.IndexModel([('summary', pymongo.TEXT)], default_language='english', name='summary_index')
     db_context.feeds_collection.create_indexes([index1, index2])
     """
-
     # compound index
     db_context.feeds_collection.create_index([('title', pymongo.TEXT), ('summary', pymongo.TEXT)], 
         default_language='english', name='title_summary_index')

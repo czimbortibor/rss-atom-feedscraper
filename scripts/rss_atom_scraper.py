@@ -1,4 +1,5 @@
 import sys
+import os
 from multiprocessing import Pool
 
 from db_context import DbContext
@@ -8,11 +9,11 @@ from config_handler import ConfigHandler
 
 def main(argv=None):
     if len(argv) == 1:
-        feeds_file_input = '../config/test.json'
+        feeds_file_input = 'config/feed_list.json'
     else:
         feeds_file_input = argv[1]
 
-    db_config_file = '../config/db_config.json'
+    db_config_file = 'config/db_config.json'
     config_handler = ConfigHandler(feeds_file_input, db_config_file)
     URI, db_name, feeds_name_collection, feeds_collection, image_collection = config_handler.get_db_config()
     db_context = DbContext(URI, db_name, feeds_name_collection, feeds_collection, image_collection)
@@ -22,7 +23,8 @@ def main(argv=None):
     print('feeds: {0}\n'.format(len(feed_list)))
 
     print('inserting the feed list into the database...\n')
-    db_context.feeds_name_collection.insert_many(feed_list_jsondata)
+    for feed in feed_list_jsondata:
+        db_context.feeds_name_collection.update_one({'url': feed['url']}, {'$set': feed}, upsert=True)
 
     scraper = Scraper(feed_list)
 
@@ -32,18 +34,18 @@ def main(argv=None):
         metadata = pool.map(scraper.get_metadata, entries)
 
     print('inserting feeds into the database...\n')
-'''    db_context.feeds_collection.insert_many(metadata)
+    for feed_data in metadata:
+        db_context.feeds_collection.update_one({'link': feed_data['link']}, {'$set': feed_data}, upsert=True)
+    #db_context.feeds_collection.update_many(metadata, {'$set': metadata}, upsert=True)
 
     print('\ndownloading the images...\n')
     # download the images and return the directory name
     img_dir = scraper.download_images(metadata)
 
     print('inserting image collection path into the database...\n')
-    import os
     full_img_path = os.path.abspath('../' + img_dir)
     data = {'path': full_img_path}
-    db_context.image_collection.insert(data)
-'''
+    db_context.image_collection.update_one(data, {'$set': data}, upsert=True)
 
 
 if __name__ == '__main__':

@@ -24,7 +24,6 @@ class Scraper:
                 url = future_urls[future]
                 try:
                     feed = future.result()
-                    print(feed['headers'])
                     entries.extend(feed['items'])
                 except Exception as ex:
                     print(ex)
@@ -52,7 +51,7 @@ class Scraper:
         if 'link' in entry:
             metadata['link'] = entry['link']
 
-        img_url =  self.scrape_image(entry)
+        img_url = self.scrape_image(entry)
         metadata['image_url'] = img_url
         if img_url and domain_name:
             url = img_url.rsplit('/')
@@ -109,7 +108,7 @@ class Scraper:
         if not os.path.exists(img_dir):
             os.makedirs(img_dir)
         os.chdir(img_dir)
-
+        
         count = 0
         http = urllib3.PoolManager()
         for item in metadata:
@@ -127,9 +126,9 @@ class Scraper:
                 file_name = domain_name + '_' + img_name
                 with open(file_name, 'w+b') as output_f:
                     output_f.write(image_bytes)
-                print(file_name)
+                print('{0}/{1} done'.format(count, len(metadata)), end='\r') # \r - beginning of the line
                 count += 1
 
         os.chdir('..')
-        print('\ndownloaded images: {0}'.format(count))
+        print('downloaded images: {0}'.format(count))
         return img_dir

@@ -75,5 +75,4 @@ feeds_file = os.path.abspath('../config/feed_list.json')
 db_config_file = os.path.abspath('../config/db_config.json')
 update_monitor = UpdateMonitor(feeds_file, db_config_file)
 
-# update_monitor.check_update_interval('http://feeds.washingtonpost.com/rss/entertainment')
 update_monitor.check_feeds()

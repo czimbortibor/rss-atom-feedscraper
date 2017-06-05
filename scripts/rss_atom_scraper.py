@@ -1,6 +1,6 @@
-import sys
 import os
 from multiprocessing import Pool
+import pymongo
 
 from db_context import DbContext
 from scraper import Scraper
@@ -8,11 +8,11 @@ from config_handler import ConfigHandler
 
 
 def main():
-    feeds_file_input = os.path.abspath('config/feed_list.json')
+    feeds_file_input = os.path.abspath('config/test.json')
     db_config_file = os.path.abspath('config/db_config.json')
     config_handler = ConfigHandler(feeds_file_input, db_config_file)
-    URI, db_name, feeds_name_collection, feeds_collection, image_collection = config_handler.get_db_config()
-    db_context = DbContext(URI, db_name, feeds_name_collection, feeds_collection, image_collection)
+    uri, db_name, feeds_name_collection, feeds_collection, image_collection = config_handler.get_db_config()
+    db_context = DbContext(uri, db_name, feeds_name_collection, feeds_collection, image_collection)
 
     print('reading {0} ...'.format(feeds_file_input))
     feed_list, feed_list_jsondata = config_handler.load_feed_list()
@@ -34,12 +34,27 @@ def main():
         db_context.feeds_collection.update_one({'link': feed_data['link']}, {'$set': feed_data}, upsert=True)
     #db_context.feeds_collection.update_many(metadata, {'$set': metadata}, upsert=True)
 
+    print('creating indexes...\n')
+    # http://api.mongodb.com/python/current/api/pymongo/collation.html#pymongo.collation.Collation
+    language_collation = pymongo.collation.Collation('en_US')
+
+    # multiple indexes
+    """index1 = pymongo.IndexModel([('title', pymongo.TEXT)], default_language='english', name='title_index')
+    index2 = pymongo.IndexModel([('summary', pymongo.TEXT)], default_language='english', name='summary_index')
+    db_context.feeds_collection.create_indexes([index1, index2])
+    """
+
+    # compound index
+    db_context.feeds_collection.create_index([('title', pymongo.TEXT), ('summary', pymongo.TEXT)], 
+        default_language='english', name='title_summary_index')
+
+    images_path_file = 'config/image_collection.json'
+    images_path = config_handler.load_image_collection_path(images_path_file)
     print('\ndownloading the images...\n')
-    # download the images and return the directory name
-    img_dir = scraper.download_images(metadata)
+    scraper.download_images(metadata, images_path)
 
     print('inserting image collection path into the database...\n')
-    full_img_path = os.path.abspath('../' + img_dir)
+    full_img_path = os.path.abspath(images_path)
     data = {'path': full_img_path}
     db_context.image_collection.update_one(data, {'$set': data}, upsert=True)
 

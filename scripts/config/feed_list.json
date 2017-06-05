@@ -10,7 +10,6 @@
   {"tags": ["ro", "zi", "ziar", "mures"], "url": "http://www.zi-de-zi.ro/feed/"},
   {"tags": ["ro", "ziar", "mures"], "url": "http://www.ziaruldemures.ro/?feed=rss2"},
   {"tags": ["hu", "szekelyhon", "szekely", "hirek", "ujsag", "szekelyfold"], "url": "https://media.szekelyhon.ro/rss/szekelyhon_hirek.xml"},
-  {"tags": ["hu", "transindex", "szekely", "hirek", "ujsag", "szekelyfold"], "url": "http://rss.transindex.ro/rss.xml"},
   {"tags": ["ro", "punctul", "ziar", "mures", "transilvania"], "url": "http://www.punctul.ro/feed/"},
   {"tags": ["ro", "ziar", "mures", "transilvania"], "url": "http://www.ziaruldemures.ro/?feed=rss2"},
   {"tags": ["hu", "udvarhely", "harghita", "hirek", "hirportal", "udvarhelyszek"], "url": "http://uh.ro/?format=feed&type=rss"}

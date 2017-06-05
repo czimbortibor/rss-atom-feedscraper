@@ -39,6 +39,16 @@ class ConfigHandler:
         # print('feed urls: {0}'.format(feed_list))
         return feed_list, feeds_data
 
+    @staticmethod
+    def load_image_collection_path(images_path_file):
+        try:
+            with open(images_path_file) as file:
+                contents = json.load(file)
+        except FileNotFoundError:
+            print('Wrong input JSON file for the image collection path!')
+            return None
+
+        return contents['path']
 
     def append_feed(self, website_url, tags, db_context):
         try:

@@ -13,7 +13,7 @@ def job():
 
 def main(argv):
     if len(argv) == 1:
-        print('using default 1 hour interval to run the script')
+        print('using default 30 minute interval to run the script')
         run_period = 30
     else:
         run_period = int(argv[1])

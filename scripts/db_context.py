@@ -2,10 +2,10 @@ import pymongo
 
 
 class DbContext:
-    def __init__(self, URI, db_name, feeds_name_collection, feeds_collection, image_collection):
+    def __init__(self, uri, db_name, feeds_name_collection, feeds_collection, image_collection):
         print('connecting to the MongoDB...')
         try:
-            self.client = pymongo.MongoClient(URI)
+            self.client = pymongo.MongoClient(uri)
             self.db = self.client[db_name]
             # print(db.collection_names(include_system_collections=False))
             # creates the collection if it does not exist

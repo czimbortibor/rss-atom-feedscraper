@@ -103,11 +103,13 @@ class Scraper:
                     if href:
                         return href.group()
 
-    def download_images(self, metadata):
-        img_dir = str(datetime.date.today())
-        if not os.path.exists(img_dir):
-            os.makedirs(img_dir)
-        os.chdir(img_dir)
+    def download_images(self, metadata, image_dir=''):
+        if image_dir == '':
+            os.chdir('..')
+            img_dir = str(datetime.date.today())
+            if not os.path.exists(img_dir):
+                os.makedirs(img_dir)
+            os.chdir(img_dir)
         
         count = 0
         http = urllib3.PoolManager()
@@ -129,6 +131,4 @@ class Scraper:
                 print('{0}/{1} done'.format(count, len(metadata)), end='\r') # \r - beginning of the line
                 count += 1
 
-        os.chdir('..')
         print('downloaded images: {0}'.format(count))
-        return img_dir

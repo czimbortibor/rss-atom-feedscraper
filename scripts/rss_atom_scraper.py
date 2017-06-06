@@ -41,19 +41,20 @@ def main():
     db_context.feeds_collection.create_indexes([index1, index2])
     """
     # compound index
-    db_context.feeds_collection.create_index([('title', pymongo.TEXT), ('summary', pymongo.TEXT)], 
+    db_context.feeds_collection.create_index([('title', pymongo.TEXT), ('summary', pymongo.TEXT)],
         default_language='english', name='title_summary_index')
 
     images_path_file = 'config/image_collection.json'
     images_path = config_handler.load_image_collection_path(images_path_file)
     print('\ndownloading the images...\n')
-    scraper.download_images(metadata, images_path)
+    download_dir = scraper.download_images(metadata, images_path)
 
     print('inserting image collection path into the database...\n')
-    full_img_path = os.path.abspath(images_path)
+    full_img_path = os.path.abspath(download_dir)
     data = {'path': full_img_path}
     db_context.image_collection.update_one(data, {'$set': data}, upsert=True)
 
+    print('all done.\n')
 
 if __name__ == '__main__':
     main()

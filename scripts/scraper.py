@@ -97,7 +97,10 @@ class Scraper:
             else:
                 href = pattern_src.search(content)
                 if href:
-                    return href.group().split('\"')[1]
+                    splitted = href.group().split('\"')
+                    if len(splitted) == 1:
+                        splitted = href.group().split('\'')
+                    return splitted[1]
                 else:
                     href = pattern_url.search(content)
                     if href:
@@ -135,3 +138,4 @@ class Scraper:
                 count += 1
 
         print('downloaded images: {0}'.format(count))
+        return download_dir

@@ -5,6 +5,7 @@ import pymongo
 from db_context import DbContext
 from scraper import Scraper
 from config_handler import ConfigHandler
+from logger import Logger
 
 
 def main():
@@ -14,11 +15,11 @@ def main():
     uri, db_name, feeds_name_collection, feeds_collection, image_collection = config_handler.get_db_config()
     db_context = DbContext(uri, db_name, feeds_name_collection, feeds_collection, image_collection)
 
-    print('reading {0} ...'.format(feeds_file_input))
+    Logger.log('reading {0} ...'.format(feeds_file_input))
     feed_list, feed_list_jsondata = config_handler.load_feed_list()
-    print('feeds: {0}\n'.format(len(feed_list)))
+    Logger.log('collecting from {0} feeds'.format(len(feed_list)))
 
-    print('inserting the feed list into the database...\n')
+    Logger.log('inserting the feed list into the database...')
     for feed in feed_list_jsondata:
         db_context.feeds_name_collection.update_one({'url': feed['url']}, {'$set': feed}, upsert=True)
 
@@ -29,12 +30,14 @@ def main():
     with Pool() as pool:
         metadata = pool.map(scraper.get_metadata, entries)
 
-    print('inserting feeds into the database...\n')
+    Logger.log('inserting metadata into the database...')
     for feed_data in metadata:
         db_context.feeds_collection.update_one({'link': feed_data['link']}, {'$set': feed_data}, upsert=True)
     #db_context.feeds_collection.update_many(metadata, {'$set': metadata}, upsert=True)
+    metadata_number = db_context.feeds_collection.find({}).count()
+    Logger.log('{0} metadata inserted'.format(metadata_number))
 
-    print('creating indexes...\n')
+    Logger.log('creating indexes...')
     # multiple indexes
     """index1 = pymongo.IndexModel([('title', pymongo.TEXT)], default_language='english', name='title_index')
     index2 = pymongo.IndexModel([('summary', pymongo.TEXT)], default_language='english', name='summary_index')
@@ -46,15 +49,15 @@ def main():
 
     images_path_file = 'config/image_collection.json'
     images_path = config_handler.load_image_collection_path(images_path_file)
-    print('\ndownloading the images...\n')
+    Logger.log('downloading the images...')
     download_dir = scraper.download_images(metadata, images_path)
 
-    print('inserting image collection path into the database...\n')
+    Logger.log('inserting image collection path into the database...')
     full_img_path = os.path.abspath(download_dir)
     data = {'path': full_img_path}
     db_context.image_collection.update_one(data, {'$set': data}, upsert=True)
 
-    print('all done.\n')
+    Logger.log('all done.\n')
 
 if __name__ == '__main__':
     main()

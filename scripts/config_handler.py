@@ -1,5 +1,7 @@
 import json
+
 import get_rss_feed
+from logger import Logger
 
 
 class ConfigHandler:
@@ -13,7 +15,7 @@ class ConfigHandler:
             with open(self.db_config_file) as file:
                 json_contents = json.load(file)
         except FileNotFoundError:
-            print('Wrong input JSON file for the database connection!')
+            Logger.log('Wrong input JSON file for the database connection!')
             return
 
         URI = json_contents['URI']
@@ -29,7 +31,7 @@ class ConfigHandler:
             with open(self.feeds_file) as file:
                 feeds_data = json.load(file)
         except FileNotFoundError:
-            print('Wrong input JSON file of the feed list!')
+            Logger.log('Wrong input JSON file of the feed list!')
             return None, None
 
         feed_list = []
@@ -45,7 +47,7 @@ class ConfigHandler:
             with open(images_path_file) as file:
                 contents = json.load(file)
         except FileNotFoundError:
-            print('Wrong input JSON file for the image collection path!')
+            Logger.log('Wrong input JSON file for the image collection path!')
             return None
 
         return contents['path']
@@ -55,7 +57,7 @@ class ConfigHandler:
             with open(self.feeds_file) as file:
                 json_contents = json.load(file)
         except FileNotFoundError:
-            print('Wrong input JSON file of the feed list!')
+            Logger.log('Wrong input JSON file of the feed list!')
             return
 
         feed_url = get_rss_feed.get_rss_feed(website_url)
@@ -77,7 +79,7 @@ class ConfigHandler:
             with open(self.feeds_file) as file:
                 json_contents = json.load(file)
         except FileNotFoundError:
-            print('Wrong input JSON file of the feed list!')
+            Logger.log('Wrong input JSON file of the feed list!')
             return
 
         # remove the selected feed
@@ -92,3 +94,4 @@ class ConfigHandler:
         if db_context:
             # remove the feed url from the database
             db_context.feeds_name_collection.delete_many({'url': url})
+            

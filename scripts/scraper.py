@@ -8,6 +8,8 @@ import feedparser
 import urllib3
 from bs4 import BeautifulSoup
 
+from logger import Logger
+
 
 class Scraper:
     def __init__(self, feed_list):
@@ -26,9 +28,9 @@ class Scraper:
                     feed = future.result()
                     entries.extend(feed['items'])
                 except Exception as ex:
-                    print(ex)
+                    Logger.log(ex)
                 finally:
-                    print('{0} \t\t - parsed'.format(url))
+                    Logger.log('{0} \t\t - parsed'.format(url))
         return entries
 
     def get_metadata(self, entry):
@@ -92,8 +94,8 @@ class Scraper:
                         if href:
                             return href.group().split('\"')[1]
                         elif 'href' in tag:
-                                href = tag['href']
-                                return href
+                            href = tag['href']
+                            return href
             else:
                 href = pattern_src.search(content)
                 if href:
@@ -134,8 +136,8 @@ class Scraper:
                 file_name = download_dir + os.path.sep + domain_name + '_' + img_name
                 with open(file_name, 'w+b') as output_f:
                     output_f.write(image_bytes)
-                print('{0}/{1} done'.format(count, len(metadata)), end='\r') # \r - beginning of the line
+                Logger.log('{0}/{1} done'.format(count, len(metadata)), end='\r') # \r - beginning of the line
                 count += 1
 
-        print('downloaded images: {0}'.format(count))
+        Logger.log('downloaded images: {0}'.format(count))
         return download_dir

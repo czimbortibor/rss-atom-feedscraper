@@ -23,7 +23,9 @@ def main():
     for feed in feed_list_jsondata:
         db_context.feeds_name_collection.update_one({'url': feed['url']}, {'$set': feed}, upsert=True)
 
-    scraper = Scraper(feed_list)
+    images_path_file = 'config/image_collection.json'
+    images_path = config_handler.load_image_collection_path(images_path_file)
+    scraper = Scraper(feed_list, images_path)
 
     entries = scraper.get_entries()
     # get the metadata in interest and the images
@@ -38,22 +40,15 @@ def main():
     Logger.log('{0} metadata inserted'.format(metadata_number))
 
     Logger.log('creating indexes...')
-    # multiple indexes
-    """index1 = pymongo.IndexModel([('title', pymongo.TEXT)], default_language='english', name='title_index')
-    index2 = pymongo.IndexModel([('summary', pymongo.TEXT)], default_language='english', name='summary_index')
-    db_context.feeds_collection.create_indexes([index1, index2])
-    """
     # compound index
     db_context.feeds_collection.create_index([('title', pymongo.TEXT), ('summary', pymongo.TEXT)],
         default_language='english', name='title_summary_index')
 
-    images_path_file = 'config/image_collection.json'
-    images_path = config_handler.load_image_collection_path(images_path_file)
     Logger.log('downloading the images...')
-    download_dir = scraper.download_images(metadata, images_path)
+    scraper.download_images(metadata, images_path)
 
     Logger.log('inserting image collection path into the database...')
-    full_img_path = os.path.abspath(download_dir)
+    full_img_path = scraper.download_dir
     data = {'path': full_img_path}
     db_context.image_collection.update_one(data, {'$set': data}, upsert=True)
 

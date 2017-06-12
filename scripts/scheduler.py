@@ -4,21 +4,20 @@ import time
 import schedule
 
 import rss_atom_scraper
-from logger import Logger
 
 
 def job():
-    Logger.log('\trunning the scrape...\n')
+    print('running the scrape...')
     rss_atom_scraper.main()
 
 
 def main(argv):
     if len(argv) == 1:
-        Logger.log('using default 30 minute interval to run the script')
+        print('using default 30 minute interval to run the script')
         run_period = 30
     else:
         run_period = int(argv[1])
-        
+
     # first run
     job()
 

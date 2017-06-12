@@ -12,8 +12,9 @@ from logger import Logger
 
 
 class Scraper:
-    def __init__(self, feed_list):
+    def __init__(self, feed_list, image_dir=''):
         self.entries = self.get_feeds(feed_list)
+        self.download_dir = self.get_download_dir(image_dir)
 
     def get_entries(self):
         return self.entries
@@ -55,12 +56,14 @@ class Scraper:
 
         img_url = self.scrape_image(entry)
         metadata['image_url'] = img_url
+
         if img_url and domain_name:
             url = img_url.rsplit('/')
             img_name = url[len(url) - 1]
-            img_file_name = domain_name + '_' + img_name
-            metadata['image_file_name'] = img_file_name
-
+            img_file_name = self.download_dir + os.path.sep + domain_name + '_' + img_name
+            metadata['image_path'] = img_file_name
+        else:
+            metadata['image_path'] = None
         return metadata
 
     def scrape_image(self, entry):
@@ -109,16 +112,6 @@ class Scraper:
                         return href.group()
 
     def download_images(self, metadata, image_dir=''):
-        date_now = str(datetime.date.today())
-        if image_dir == '':
-            # parent directory
-            image_dir = os.path.dirname(os.getcwd())
-        if not os.path.exists(image_dir):
-            os.makedirs(image_dir)
-        # specified directory + current date
-        download_dir = os.path.join(image_dir, date_now)
-        if not os.path.exists(download_dir):
-            os.makedirs(download_dir)
         count = 0
         http = urllib3.PoolManager()
         for item in metadata:
@@ -133,11 +126,23 @@ class Scraper:
 
             if img_name:
                 domain_name = item['rss'].rsplit('/')[2].replace('www.', '')
-                file_name = download_dir + os.path.sep + domain_name + '_' + img_name
+                file_name = self.download_dir + os.path.sep + domain_name + '_' + img_name
                 with open(file_name, 'w+b') as output_f:
                     output_f.write(image_bytes)
-                Logger.log('{0}/{1} done'.format(count, len(metadata)), end='\r') # \r - beginning of the line
+                # Logger.log('{0}/{1} done'.format(count, len(metadata)))
                 count += 1
 
         Logger.log('downloaded images: {0}'.format(count))
+
+    def get_download_dir(self, image_dir=''):
+        date_now = str(datetime.date.today())
+        if image_dir == '':
+            # parent directory
+            image_dir = os.path.dirname(os.getcwd())
+        if not os.path.exists(image_dir):
+            os.makedirs(image_dir)
+        # specified directory + current date
+        download_dir = os.path.join(image_dir, date_now)
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
         return download_dir

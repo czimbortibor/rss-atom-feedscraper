@@ -1,7 +1,7 @@
 from concurrent import futures
 import re
 import os
-import datetime
+from datetime import datetime
 from collections import defaultdict
 
 import feedparser
@@ -48,7 +48,17 @@ class Scraper:
             # remove the html tags
             metadata['summary'] = BeautifulSoup(entry['summary'], 'lxml').text
         if 'published' in entry:
-            metadata['published'] = entry['published']
+            try:
+                publish_date = datetime.strptime(entry['published'], '%a, %d %b %Y %H:%M:%S %z').isoformat()
+            except ValueError:
+                publish_date = entry['published']
+            metadata['published'] = publish_date
+        elif 'updated' in entry:
+            try:
+                publish_date = datetime.strptime(entry['updated'], '%a, %d %b %Y %H:%M:%S %z').isoformat()
+            except ValueError:
+                publish_date = entry['updated']
+            metadata['published'] = publish_date
         if 'updated' in entry:
             metadata['updated'] = entry['updated']
         if 'link' in entry:
@@ -135,7 +145,7 @@ class Scraper:
         Logger.log('downloaded images: {0}'.format(count))
 
     def get_download_dir(self, image_dir=''):
-        date_now = str(datetime.date.today())
+        date_now = str(datetime.today().date())
         if image_dir == '':
             # parent directory
             image_dir = os.path.dirname(os.getcwd())

@@ -43,6 +43,7 @@ def main():
     # compound index
     db_context.feeds_collection.create_index([('title', pymongo.TEXT), ('summary', pymongo.TEXT)],
         default_language='english', name='title_summary_index')
+    db_context.feeds_collection.create_index([("image_path", pymongo.ASCENDING)])
 
     Logger.log('downloading the images...')
     scraper.download_images(metadata, images_path)

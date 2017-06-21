@@ -22,5 +22,13 @@
   {"tags": ["en", "UK", "guardian", "sport"], "url": "https://www.theguardian.com/uk/sport/rss"},
   {"tags": ["en", "Canada", "news"], "url": "http://www.cbc.ca/cmlink/rss-canada"},
   {"tags": ["en", "Canada", "news", "arts", "entertainment"], "url": "http://www.cbc.ca/cmlink/rss-arts"},
-  {"tags": ["en", "Canada", "news", "sports"], "url": "http://www.cbc.ca/cmlink/rss-sports"}
+  {"tags": ["en", "Canada", "news", "sports"], "url": "http://www.cbc.ca/cmlink/rss-sports"},
+  {"tags": ["en", "ars", "technica", "news", "technology"], "url": "http://feeds.arstechnica.com/arstechnica/index"},
+  {"tags": ["en", "ars", "technica", "news", "open", "source"], "url": "http://feeds.arstechnica.com/arstechnica/open-source"},
+  {"tags": ["en", "tech", "crunch", "news", "technology", "startups"], "url": "http://feeds.feedburner.com/TechCrunch/"},
+  {"tags": ["en", "tech", "radar", "technology", "news"], "url": "http://www.techradar.com/rss"},
+  {"tags": ["en", "tech", "radar", "gaming", "news"], "url": "http://www.techradar.com/rss/news/networking"},
+  {"tags": ["en", "tech", "radar", "photography", "news"], "url": "http://www.techradar.com/rss/news/photography-video-capture"},
+  {"tags": ["en", "mixmag", "music", "news", "dance", "club", "entertainment", "festival"], "url": "http://mixmag.net/rss.xml"},
+  {"tags": ["en", "rolling", "stone", "music", "news", "celebrities"], "url": "http://www.rollingstone.com/rss"}
 ]
